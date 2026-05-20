@@ -28,7 +28,9 @@ export default function Layout({ children }: { children: React.ReactNode }) {
     startNextDay,
     activeEvent,
     eventTimeLeft,
-    feedback
+    feedback,
+    activeTab,
+    setActiveTab
   } = useGame();
 
   const formatTime = (minutes: number) => {
@@ -73,11 +75,11 @@ export default function Layout({ children }: { children: React.ReactNode }) {
         </div>
 
         <nav className="flex items-center gap-2">
-          <NavItem to="/game.html" icon={<LayoutDashboard className="w-4 h-4" />} label="經營" />
-          <NavItem to="/menu.html" icon={<Utensils className="w-4 h-4" />} label="菜單" />
-          <NavItem to="/achievements.html" icon={<Trophy className="w-4 h-4" />} label="成就" />
-          <NavItem to="/upgrade.html" icon={<TrendingUp className="w-4 h-4" />} label="升級" />
-          <NavItem to="/settings.html" icon={<Settings className="w-4 h-4" />} label="設定" />
+          <NavItem active={activeTab === 'game'} onClick={() => setActiveTab('game')} icon={<LayoutDashboard className="w-4 h-4" />} label="經營" />
+          <NavItem active={activeTab === 'menu'} onClick={() => setActiveTab('menu')} icon={<Utensils className="w-4 h-4" />} label="菜單" />
+          <NavItem active={activeTab === 'achievements'} onClick={() => setActiveTab('achievements')} icon={<Trophy className="w-4 h-4" />} label="成就" />
+          <NavItem active={activeTab === 'upgrade'} onClick={() => setActiveTab('upgrade')} icon={<TrendingUp className="w-4 h-4" />} label="升級" />
+          <NavItem active={activeTab === 'settings'} onClick={() => setActiveTab('settings')} icon={<Settings className="w-4 h-4" />} label="設定" />
         </nav>
       </header>
 
@@ -185,17 +187,17 @@ export default function Layout({ children }: { children: React.ReactNode }) {
   );
 }
 
-function NavItem({ to, icon, label }: { to: string; icon: React.ReactNode; label: string }) {
+function NavItem({ active, onClick, icon, label }: { active: boolean; onClick: () => void; icon: React.ReactNode; label: string }) {
   return (
-    <NavLink 
-      to={to}
-      className={({ isActive }) => `
+    <button 
+      onClick={onClick}
+      className={`
         px-6 py-3 rounded-2xl font-black text-sm flex items-center gap-2 transition-all
-        ${isActive ? 'bg-orange-500 text-white shadow-lg shadow-orange-500/20' : 'text-slate-400 hover:text-slate-600 hover:bg-slate-50'}
+        ${active ? 'bg-orange-500 text-white shadow-lg shadow-orange-500/20' : 'text-slate-400 hover:text-slate-600 hover:bg-slate-50'}
       `}
     >
       {icon}
       {label}
-    </NavLink>
+    </button>
   );
 }

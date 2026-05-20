@@ -58,6 +58,9 @@ interface GameContextType {
   prePrepItems: string[];
   togglePrePrep: (itemId: string) => void;
   
+  activeTab: string;
+  setActiveTab: (tab: string) => void;
+  
   resetGame: () => void;
   // Actions
   generateOrder: () => void;
@@ -69,6 +72,7 @@ interface GameContextType {
   addToRegister: (itemId: string) => void;
   clearRegister: () => void;
   getItemPriceForOrder: (itemId: string, order: Order | null) => number;
+  hurryTable: (tableIdx: number) => void;
 }
 
 const GameContext = createContext<GameContextType | undefined>(undefined);
@@ -168,8 +172,8 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [eventTimeLeft, setEventTimeLeft] = useState<number>(0);
 
   const restaurantLevel = Math.floor(stats.totalEarned / 500) + 1;
-  const isWorkHours = stats.currentTime < 1080;
-  const isDayComplete = stats.currentTime >= 1080 && tables.every(t => t === null) && cleaningTables.every(c => c === null);
+  const isWorkHours = stats.currentTime < 1380;
+  const isDayComplete = stats.currentTime >= 1380 && tables.every(t => t === null) && cleaningTables.every(c => c === null);
 
   const tablesRef = useRef<(Order | null)[]>([]);
   useEffect(() => { tablesRef.current = tables; }, [tables]);
@@ -488,6 +492,21 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const addToRegister = (id: string) => setRegisterItems(p => [...p, id]);
   const clearRegister = () => { setRegisterItems([]); setPosInput(''); };
 
+  const hurryTable = useCallback((tableIdx: number) => {
+    setTables(prev => {
+      const next = [...prev];
+      if (next[tableIdx]) {
+        next[tableIdx] = {
+          ...next[tableIdx]!,
+          startTime: next[tableIdx]!.startTime + 25000
+        };
+      }
+      return next;
+    });
+    setFeedback({ type: 'success', text: '服務生催熟：顧客加快了吃飯與買單速度！⚡' });
+    setTimeout(() => setFeedback(null), 1500);
+  }, []);
+
   const toggleDailySpecial = (itemId: string) => {
     setDailySpecials(prev => {
       if (prev.includes(itemId)) {
@@ -641,6 +660,7 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
   }, []); // Run once, values accessed via refs
 
   const [recentReviews, setRecentReviews] = useState<any[]>([]);
+  const [activeTab, setActiveTab] = useState('game');
 
   const resetGame = useCallback(() => {
     isResettingRef.current = true;
@@ -658,8 +678,9 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
       cheatsEnabled, setCheatsEnabled,
       volumes, setVolumes, difficulty, setDifficulty, toggleDailySpecial,
       prePrepItems, togglePrePrep,
+      activeTab, setActiveTab,
       generateOrder, checkout, buyUpgrade, trainStaff, allocateSkillPoints, startNextDay, addToRegister, clearRegister,
-      getItemPriceForOrder, resetGame
+      getItemPriceForOrder, resetGame, hurryTable
     }}>
       {children}
     </GameContext.Provider>

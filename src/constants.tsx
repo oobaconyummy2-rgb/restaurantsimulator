@@ -99,7 +99,7 @@ export const STAFF_SKILLS: Record<string, Skill[]> = {
 };
 
 export const INITIAL_STAFF: Staff[] = [
-  { id: 'waiter', name: '服務生', description: '負責帶位。等級越高收的小費越多。', baseCost: 50, level: 0, icon: <Users className="w-5 h-5" />, skillPoints: 0, skills: {} },
+  { id: 'waiter', name: '服務生', description: '負責帶位。等級越高小費越多；升級後可點擊客人進行『催促』加快用餐與買單！', baseCost: 50, level: 0, icon: <Users className="w-5 h-5" />, skillPoints: 0, skills: {} },
   { id: 'cashier', name: '收銀員', description: '等級 1 自動點單，等級 2 以上自動結帳。', baseCost: 200, level: 0, icon: <CreditCard className="w-5 h-5" />, skillPoints: 0, skills: {} },
   { id: 'chef', name: '廚師', description: '提升餐點售價。高等級可觸發手藝加成。', baseCost: 120, level: 0, icon: <ChefHat className="w-5 h-5" />, skillPoints: 0, skills: {} },
   { id: 'host', name: '接待員', description: '提升客人耐心。', baseCost: 150, level: 0, icon: <Store className="w-5 h-5" />, skillPoints: 0, skills: {} },
