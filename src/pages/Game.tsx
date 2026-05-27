@@ -272,7 +272,7 @@ export default function Game({
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch relative z-10">
         {/* Left: Receipt Display */}
         <div className="lg:col-span-3 flex flex-col">
-          <div className="min-h-[800px] bg-slate-900 rounded-[2rem] p-8 border border-white/10 flex flex-col shadow-2xl relative">
+          <div className="min-h-[350px] lg:min-h-[800px] lg:h-auto bg-slate-900 rounded-[2rem] p-6 md:p-8 border border-white/10 flex flex-col shadow-2xl relative">
             <div
               className="absolute inset-0 opacity-[0.03] pointer-events-none"
               style={{
@@ -357,7 +357,7 @@ export default function Game({
 
         {/* Middle: Menu Grid */}
         <div className="lg:col-span-5 flex flex-col">
-          <div className="min-h-[800px] bg-slate-900 rounded-[2rem] p-8 shadow-2xl border border-white/10 flex flex-col relative overflow-hidden">
+          <div className="min-h-[350px] lg:min-h-[800px] lg:h-auto bg-slate-900 rounded-[2rem] p-6 md:p-8 shadow-2xl border border-white/10 flex flex-col relative overflow-hidden">
             <Utensils className="absolute -top-12 -right-12 w-48 h-48 text-white/5 rotate-12 pointer-events-none" />
             <div className="relative z-10 flex flex-col h-full">
               <div className="flex items-center justify-between mb-6 pb-4 border-b border-white/10 shrink-0">
@@ -415,7 +415,7 @@ export default function Game({
 
         {/* Right: Digital Register / POS */}
         <div className="lg:col-span-4 flex flex-col">
-          <div className="min-h-[800px] bg-white rounded-[2rem] p-8 shadow-xl text-slate-800 flex flex-col border border-slate-200 relative">
+          <div className="min-h-[400px] lg:min-h-[800px] lg:h-auto bg-white rounded-[2rem] p-6 md:p-8 shadow-xl text-slate-800 flex flex-col border border-slate-200 relative">
             <div className="flex items-center justify-between mb-8 shrink-0">
               <div className="flex items-center gap-3">
                 <CreditCard className="w-5 h-5 text-blue-600" />
