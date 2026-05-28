@@ -40,7 +40,7 @@ export default function Home() {
                 <div className="w-20 h-20 bg-orange-500 rounded-3xl flex items-center justify-center mb-8 shadow-xl shadow-orange-500/20 group-hover:scale-110 transition-transform">
                    <Store className="w-10 h-10 text-white" />
                 </div>
-                <h3 className="text-2xl font-black text-slate-800 mb-4">餐廳大亨 (自由模式)</h3>
+                <h3 className="text-2xl font-black text-slate-800 mb-4">餐廳模擬器 (自由模式)</h3>
                 <p className="text-slate-500 text-sm leading-relaxed mb-10 flex-1">
                   扮演餐廳經營者，從桌椅擺設、招聘員工到設計菜單，全方位打造你的美食帝國。考驗你的經營策略與即時管理能力。
                 </p>
@@ -92,7 +92,7 @@ export default function Home() {
               <Zap className="w-4 h-4 fill-current" />
             </motion.div>
           </div>
-          <h1 className="text-4xl font-black text-slate-800 tracking-tight">餐廳大亨</h1>
+          <h1 className="text-4xl font-black text-slate-800 tracking-tight">餐廳模擬器</h1>
           <p className="text-slate-400 font-bold uppercase tracking-widest text-xs mt-2">Restaurant Tycoon Extreme</p>
         </div>
 

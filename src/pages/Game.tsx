@@ -51,6 +51,7 @@ export default function Game({
 
   const [shoutingTables, setShoutingTables] = React.useState<Record<number, string | null>>({});
   const [cooldownTables, setCooldownTables] = React.useState<Record<number, number>>({});
+  const [mobileTab, setMobileTab] = React.useState<'order' | 'menu' | 'pos'>('order');
 
   const shoutPhrases = [
     "「請客人吃快一點喔！💨」",
@@ -106,6 +107,12 @@ export default function Game({
     cheatsEnabled,
   ]); // Include dependencies
 
+  React.useEffect(() => {
+    if (selectedTableIndex !== null) {
+      setMobileTab('order');
+    }
+  }, [selectedTableIndex]);
+
   const handleNumpadPress = (val: string) => {
     if (val === "C") {
       setPosInput("");
@@ -154,35 +161,32 @@ export default function Game({
   };
 
   const content = (
-    <div className="flex flex-col gap-10 pb-32">
+    <div className="flex flex-col gap-4 md:gap-6 pb-20">
       {/* Top Section: Table Grid (Shrinkable) */}
-      <section className="bg-white rounded-[2rem] p-8 border border-slate-200 shadow-sm relative overflow-hidden">
-        <div className="flex items-center justify-between mb-4">
-          <div className="flex items-center gap-3">
-            <div className="p-2 bg-blue-100 rounded-xl text-blue-600">
-              <Store className="w-5 h-5" />
+      <section className="bg-white rounded-2xl md:rounded-[2rem] p-3 md:p-6 border border-slate-200 shadow-sm relative overflow-hidden">
+        <div className="flex items-center justify-between mb-3">
+          <div className="flex items-center gap-2">
+            <div className="p-1.5 bg-blue-100 rounded-lg text-blue-600">
+              <Store className="w-4 h-4" />
             </div>
             <div>
-              <h3 className="text-lg font-black text-slate-800 tracking-tight">
-                餐廳座標
+              <h3 className="text-sm md:text-base font-black text-slate-800 tracking-tight">
+                餐廳座位 (Live Floor)
               </h3>
-              <p className="text-slate-400 text-[8px] font-bold uppercase tracking-[0.2em]">
-                Live Floor Plan
-              </p>
             </div>
           </div>
           {isWorkHours && (
             <button
               onClick={generateOrder}
-              className="px-6 py-2 bg-orange-500 text-white text-[10px] font-black rounded-full hover:bg-orange-600 transition-all shadow-lg shadow-orange-500/10 uppercase tracking-widest flex items-center gap-2"
+              className="px-4 py-1.5 bg-orange-500 text-white text-[9px] md:text-[10px] font-black rounded-full hover:bg-orange-600 transition-all shadow-md shadow-orange-500/10 uppercase tracking-wider flex items-center gap-1"
             >
-              <Plus className="w-3 h-3" />
+              <Plus className="w-2.5 h-2.5" />
               招攬顧客
             </button>
           )}
         </div>
 
-        <div className="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
+        <div className="grid grid-cols-4 sm:grid-cols-5 md:grid-cols-6 lg:grid-cols-6 gap-1.5 md:gap-3">
           {tables.map((order, idx) => {
             const isCleaning = cleaningTables[idx] !== null;
             const cleaner = staff.find((s) => s.id === "cleaner");
@@ -197,13 +201,13 @@ export default function Game({
                 key={idx}
                 onClick={() => setSelectedTableIndex(idx)}
                 className={`
-                  relative aspect-square rounded-[1.5rem] border-2 transition-all flex flex-col items-center justify-center gap-1 group
-                  ${selectedTableIndex === idx ? "bg-blue-50 border-blue-400 shadow-lg ring-4 ring-blue-100 scale-105 z-10" : order || isCleaning ? "bg-white border-slate-200 hover:border-slate-400" : "bg-slate-50 border-slate-100 border-dashed opacity-40 hover:opacity-100"}
+                  relative aspect-square rounded-xl md:rounded-2xl border md:border-2 transition-all flex flex-col items-center justify-center p-1 md:gap-1 group
+                  ${selectedTableIndex === idx ? "bg-blue-50 border-blue-400 shadow-md ring-2 ring-blue-100 scale-102 z-10" : order || isCleaning ? "bg-white border-slate-200 hover:border-slate-400" : "bg-slate-50 border-slate-100 border-dashed opacity-40 hover:opacity-100"}
                 `}
               >
                 <div
                   className={`
-                  w-10 h-10 rounded-xl flex items-center justify-center transition-transform group-hover:scale-110 relative
+                  w-7 h-7 md:w-10 md:h-10 rounded-lg md:rounded-xl flex items-center justify-center transition-transform group-hover:scale-105 relative
                   ${order ? (order.isVip ? "bg-amber-100 text-amber-600 shadow-sm border border-amber-200" : "bg-blue-100 text-blue-600 shadow-inner") : isCleaning ? "bg-amber-100 text-amber-500" : "bg-slate-200 text-slate-400"}
                 `}
                 >
@@ -268,11 +272,62 @@ export default function Game({
         </div>
       </section>
 
+      {/* Mobile Snug Tabs Controller */}
+      <div className="flex lg:hidden bg-slate-900 border border-white/10 p-1.5 rounded-[1.5rem] gap-1 z-40 shadow-xl mb-6 sticky top-[80px]">
+        <button
+          type="button"
+          onClick={() => setMobileTab('order')}
+          className={`flex-1 py-3 text-center rounded-xl font-black text-xs transition-all flex items-center justify-center gap-1.5 ${
+            mobileTab === 'order'
+              ? 'bg-orange-500 text-white shadow-lg shadow-orange-500/20'
+              : 'text-slate-400 hover:text-slate-200'
+          }`}
+        >
+          <span>📋 顧客點單</span>
+          {currentOrder && (
+            <span className={`text-[10px] rounded-md px-1.5 py-0.5 font-bold ${
+              mobileTab === 'order' ? 'bg-white/25 text-white' : 'bg-white/10 text-slate-300'
+            }`}>
+              {currentOrder.items.length}
+            </span>
+          )}
+        </button>
+        <button
+          type="button"
+          onClick={() => setMobileTab('menu')}
+          className={`flex-1 py-3 text-center rounded-xl font-black text-xs transition-all flex items-center justify-center gap-1.5 ${
+            mobileTab === 'menu'
+              ? 'bg-orange-500 text-white shadow-lg shadow-orange-500/20'
+              : 'text-slate-400 hover:text-slate-200'
+          }`}
+        >
+          <span>🍳 菜單項目</span>
+        </button>
+        <button
+          type="button"
+          onClick={() => setMobileTab('pos')}
+          className={`flex-1 py-3 text-center rounded-xl font-black text-xs transition-all flex items-center justify-center gap-1.5 ${
+            mobileTab === 'pos'
+              ? 'bg-orange-500 text-white shadow-lg shadow-orange-500/20'
+              : 'text-slate-400 hover:text-slate-200'
+          }`}
+        >
+          <span>💵 收銀點餐</span>
+          {registerItems.length > 0 && (
+            <span className={`text-[10px] rounded-md px-1.5 py-0.5 font-bold animate-pulse ${
+              mobileTab === 'pos' ? 'bg-white/25 text-white' : 'bg-white/10 text-slate-300'
+            }`}>
+              {registerItems.length}
+            </span>
+          )}
+        </button>
+      </div>
+
       {/* Main Interface: Order Details + Menu + Register */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch relative z-10">
-        {/* Left: Receipt Display */}
-        <div className="lg:col-span-3 flex flex-col">
-          <div className="min-h-[350px] lg:min-h-[800px] lg:h-auto bg-slate-900 rounded-[2rem] p-6 md:p-8 border border-white/10 flex flex-col shadow-2xl relative">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch relative z-10">
+        {/* Left: Receipt Display (顧客訂單) */}
+        <div className={`lg:col-span-3 flex flex-col ${mobileTab === 'order' ? 'block' : 'hidden lg:flex'}`}>
+          <div className="bg-slate-900 rounded-2xl md:rounded-3xl p-3.5 md:p-4 border border-white/10 flex flex-col shadow-2xl relative lg:h-[425px] transition-all">
             <div
               className="absolute inset-0 opacity-[0.03] pointer-events-none"
               style={{
@@ -282,90 +337,132 @@ export default function Game({
               }}
             />
 
-            <div className="mb-6 flex items-center justify-between relative z-10 shrink-0">
+            <div className="mb-3 flex items-center justify-between relative z-10 shrink-0">
               <div>
-                <h4 className="text-base font-black text-white tracking-tight uppercase tracking-wider">
+                <h4 className="text-xs font-black text-white tracking-wider flex items-center gap-1.5">
+                  <span className="inline-block w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping" />
                   顧客訂單
                 </h4>
-                <p className="text-[9px] font-bold text-white/40 uppercase tracking-widest mt-1">
+                <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mt-0.5">
                   {selectedTableIndex !== null
-                    ? `Table ${selectedTableIndex + 1}`
-                    : "STANDBY"}
+                    ? `桌位 Table ${selectedTableIndex + 1}`
+                    : "等待點選桌位"}
                 </p>
               </div>
-              {currentOrder?.isVip && (
-                <div className="bg-amber-500/20 text-amber-500 px-2 py-1 rounded-lg flex items-center gap-1 border border-amber-500/30">
-                  <Crown className="w-3 h-3" />
+              {currentOrder ? (
+                <div className="flex gap-1">
+                  {currentOrder.isVip && (
+                    <div className="bg-amber-500/20 text-amber-400 px-1.5 py-0.5 rounded-md flex items-center gap-0.5 border border-amber-500/30 text-[9px] font-black">
+                      <Crown className="w-2 h-2" />
+                      VIP
+                    </div>
+                  )}
+                  <span className="bg-blue-500/25 text-blue-400 px-1.5 py-0.5 rounded-md text-[9px] font-black border border-blue-500/20">
+                    {getCustomerInfo(currentOrder.customerType).name}
+                  </span>
                 </div>
+              ) : (
+                <div className="w-1 h-1 rounded-full bg-slate-700" />
               )}
             </div>
 
-            <div className="flex-1 overflow-y-auto pr-2 custom-scrollbar relative z-10 space-y-3">
+            {/* List of ordered items containing scrolling inside responsive min-to-max heights */}
+            <div className="flex-1 overflow-y-auto pr-1 custom-scrollbar relative z-10 space-y-1.5 max-h-[180px] lg:max-h-none min-h-[80px]">
               {currentOrder ? (
-                currentOrder.items.map((itId, i) => (
-                  <div
-                    key={i}
-                    className="bg-white/5 p-4 rounded-2xl border border-white/5 flex items-center gap-4 group hover:bg-white/10 transition-all"
-                  >
-                    <div className="w-10 h-10 rounded-xl bg-blue-500/20 flex items-center justify-center text-xl filter drop-shadow-md group-hover:scale-110 transition-transform">
-                      {getFoodIcon(itId)}
-                    </div>
-                    <div className="flex-1">
-                      <span className="font-black text-white text-[13px] block leading-tight">
-                        {getFoodName(itId)}
-                      </span>
-                    </div>
-                    <span className="font-mono text-white/40 text-[10px]">
-                      ${getItemPriceForOrder(itId, currentOrder)}
-                    </span>
-                  </div>
-                ))
+                <div className="space-y-1.5">
+                  <p className="text-[9px] font-black text-orange-400/80 uppercase tracking-wider block animate-pulse">
+                    💡 點選下方餐點可直接送入點餐檯
+                  </p>
+                  {currentOrder.items.map((itId, i) => (
+                    <button
+                      key={i}
+                      type="button"
+                      onClick={() => addToRegister(itId)}
+                      className="w-full text-left bg-white/5 hover:bg-white/10 p-2 rounded-lg border border-white/5 flex items-center justify-between group transition-all active:scale-95 duration-75"
+                    >
+                      <div className="flex items-center gap-2 min-w-0">
+                        <div className="w-6 h-6 rounded-md bg-blue-500/20 flex items-center justify-center text-xs filter drop-shadow-md group-hover:scale-105 transition-transform shrink-0">
+                          {getFoodIcon(itId)}
+                        </div>
+                        <span className="font-black text-white text-[11px] block leading-tight truncate">
+                          {getFoodName(itId)}
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-1.5 shrink-0">
+                        <span className="font-mono text-white/40 text-[9px] font-bold">
+                          ${getItemPriceForOrder(itId, currentOrder)}
+                        </span>
+                        <span className="bg-orange-500/10 text-orange-400 group-hover:bg-orange-500 group-hover:text-white border border-orange-500/20 text-[8px] font-black px-1.5 py-0.5 rounded transition-all">
+                          點選
+                        </span>
+                      </div>
+                    </button>
+                  ))}
+                </div>
               ) : (
-                <div className="h-full flex flex-col items-center justify-center opacity-10 gap-4">
-                  <Utensils className="w-8 h-8 text-white" />
+                <div className="h-full py-8 lg:py-0 flex flex-col items-center justify-center opacity-30 gap-2.5 text-center">
+                  <Utensils className="w-5 h-5 text-white animate-bounce" />
+                  <p className="text-[9px] font-black text-slate-400 leading-relaxed">
+                    請點選上方座位圖<br />查看該桌客人的餐點
+                  </p>
                 </div>
               )}
             </div>
 
             {currentOrder && (
-              <div className="mt-6 pt-6 border-t border-white/10 relative z-10 shrink-0">
-                <div className="flex justify-between items-center bg-blue-600/10 text-blue-400 p-4 rounded-2xl border border-blue-500/10">
-                  <span className="text-[9px] font-black uppercase tracking-[0.2em] opacity-60">
-                    Total Bill
+              <div className="mt-2 pt-2 border-t border-white/5 relative z-10 shrink-0">
+                <div className="flex justify-between items-center bg-blue-600/10 text-blue-400 p-2.5 rounded-lg border border-blue-500/10 mb-1.5">
+                  <span className="text-[9px] font-black uppercase tracking-[0.1em] opacity-75">
+                    應收金額 (Total)
                   </span>
-                  <span className="text-2xl font-black font-mono tracking-tighter text-white">
+                  <span className="text-lg font-black font-mono tracking-tighter text-white">
                     ${Math.round(currentOrder.total)}
                   </span>
                 </div>
               </div>
             )}
 
+            {currentOrder && (
+              <div className="mt-1.5 shrink-0 relative z-10 flex flex-col gap-1">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setRegisterItems(currentOrder.items);
+                    setMobileTab('pos');
+                  }}
+                  className="w-full py-2 bg-blue-600 hover:bg-blue-700 text-white font-black text-[10px] uppercase tracking-wider rounded-lg transition-all flex items-center justify-center gap-1.5 active:scale-95 shadow-md border border-blue-500/85 animate-pulse"
+                >
+                  📥 一鍵整單轉入點餐檯
+                </button>
+              </div>
+            )}
+
             {currentOrder && (staff.find(s => s.id === 'waiter')?.level || 0) > 0 && (
-              <div className="mt-3 shrink-0 relative z-10">
+              <div className="mt-1 shrink-0 relative z-10">
                 <button
                   type="button"
                   onClick={() => triggerHurry(selectedTableIndex!)}
-                  className="w-full py-3.5 bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-500 hover:to-amber-600 text-slate-900 font-extrabold text-[11px] uppercase tracking-wider rounded-2xl transition-all flex items-center justify-center gap-2 active:scale-95 shadow-lg shadow-amber-500/10 border border-amber-300"
+                  className="w-full py-1.5 bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-500 hover:to-amber-600 text-slate-900 font-black text-[10px] uppercase tracking-wider rounded-lg transition-all flex items-center justify-center gap-1.5 active:scale-95 shadow-md shadow-amber-500/10 border border-amber-300"
                 >
-                  <Volume2 className="w-3.5 h-3.5" />
-                  🗣️ 服務生催促客人：快一點！
+                  <Volume2 className="w-3 h-3 animate-pulse" />
+                  👤 催促客人
                 </button>
               </div>
             )}
           </div>
         </div>
 
-        {/* Middle: Menu Grid */}
-        <div className="lg:col-span-5 flex flex-col">
-          <div className="min-h-[350px] lg:min-h-[800px] lg:h-auto bg-slate-900 rounded-[2rem] p-6 md:p-8 shadow-2xl border border-white/10 flex flex-col relative overflow-hidden">
+        {/* Middle: Menu Grid (菜單研發) */}
+        <div className={`lg:col-span-5 flex flex-col ${mobileTab === 'menu' ? 'block' : 'hidden lg:flex'}`}>
+          <div className="bg-slate-900 rounded-2xl md:rounded-3xl p-3.5 md:p-4 shadow-2xl border border-white/10 flex flex-col relative overflow-hidden lg:h-[425px] transition-all">
             <Utensils className="absolute -top-12 -right-12 w-48 h-48 text-white/5 rotate-12 pointer-events-none" />
             <div className="relative z-10 flex flex-col h-full">
-              <div className="flex items-center justify-between mb-6 pb-4 border-b border-white/10 shrink-0">
-                <div className="flex items-center gap-3">
-                  <div className="p-2 bg-white/5 text-orange-400 rounded-xl">
-                    <Utensils className="w-4 h-4" />
+              <div className="flex items-center justify-between mb-3 pb-2 border-b border-white/10 shrink-0">
+                <div className="flex items-center gap-2">
+                  <div className="p-1.5 bg-white/5 text-orange-400 rounded-lg">
+                    <Utensils className="w-3.5 h-3.5" />
                   </div>
-                  <h3 className="font-black text-base text-white tracking-tight uppercase tracking-widest leading-none">
+                  <h3 className="font-black text-sm text-white tracking-widest leading-none">
                     菜單研發
                   </h3>
                 </div>
@@ -373,16 +470,17 @@ export default function Game({
                   {dailySpecials.map((id) => (
                     <div
                       key={id}
-                      className="w-6 h-6 rounded-lg bg-orange-500/20 text-orange-400 flex items-center justify-center text-xs"
+                      className="w-5 h-5 rounded-md bg-orange-500/20 text-orange-400 flex items-center justify-center text-xs"
                       title="Daily Special"
                     >
-                      <Sparkles className="w-3 h-3" />
+                      <Sparkles className="w-2.5 h-2.5" />
                     </div>
                   ))}
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 gap-3 overflow-y-auto pr-2 custom-scrollbar flex-1 pb-2 content-start">
+              {/* Made more screen resource efficient by allowing 3 or 4 columns on medium screen sizes, and scrolling with capped height on mobile */}
+              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-2 gap-1.5 overflow-y-auto pr-1 custom-scrollbar flex-1 pb-1.5 content-start max-h-[180px] lg:max-h-none">
                 {FOOD_ITEMS.filter((item) => {
                   const upgradeId = item.requiredUpgradeId;
                   if (!upgradeId) return true;
@@ -391,18 +489,18 @@ export default function Game({
                   <button
                     key={item.id}
                     onClick={() => addToRegister(item.id)}
-                    className="group bg-white/5 hover:bg-white/10 border border-white/5 hover:border-orange-500/30 p-3 rounded-[1.5rem] transition-all flex flex-col items-center gap-2 active:scale-95 shadow-md h-fit"
+                    className="group bg-white/5 hover:bg-white/10 border border-white/5 hover:border-orange-500/30 p-2 rounded-lg transition-all flex items-center gap-2.5 active:scale-95 shadow-md text-left"
                   >
                     <div
-                      className={`w-10 h-10 rounded-xl ${item.color} text-white flex items-center justify-center text-xl shadow-md group-hover:scale-110 transition-transform duration-500`}
+                      className={`w-7 h-7 rounded-md ${item.color} text-white flex items-center justify-center text-xs shadow-sm group-hover:scale-105 transition-transform shrink-0`}
                     >
                       {item.icon}
                     </div>
-                    <div className="text-center w-full">
-                      <p className="font-black text-[9px] text-white group-hover:text-orange-400 transition-colors uppercase tracking-tight truncate px-1">
+                    <div className="min-w-0 flex-1">
+                      <p className="font-extrabold text-[11px] text-white group-hover:text-orange-400 transition-colors uppercase truncate">
                         {item.name}
                       </p>
-                      <p className="text-[10px] font-black text-white/40 font-mono tracking-tighter mt-0.5">
+                      <p className="text-[10px] font-black text-white/40 font-mono tracking-tight">
                         ${getItemPriceForOrder(item.id, currentOrder)}
                       </p>
                     </div>
@@ -413,31 +511,33 @@ export default function Game({
           </div>
         </div>
 
-        {/* Right: Digital Register / POS */}
-        <div className="lg:col-span-4 flex flex-col">
-          <div className="min-h-[400px] lg:min-h-[800px] lg:h-auto bg-white rounded-[2rem] p-6 md:p-8 shadow-xl text-slate-800 flex flex-col border border-slate-200 relative">
-            <div className="flex items-center justify-between mb-8 shrink-0">
-              <div className="flex items-center gap-3">
-                <CreditCard className="w-5 h-5 text-blue-600" />
-                <h4 className="text-base font-black tracking-tight text-slate-800">
-                  收銀終端
+        {/* Right: Digital Register / POS (收銀點餐檯) */}
+        <div className={`lg:col-span-4 flex flex-col ${mobileTab === 'pos' ? 'block' : 'hidden lg:flex'}`}>
+          <div className="bg-white rounded-2xl md:rounded-3xl p-3.5 md:p-3 shadow-xl text-slate-800 flex flex-col border border-slate-200 relative lg:h-[425px] transition-all">
+            <div className="flex items-center justify-between mb-2 shrink-0">
+              <div className="flex items-center gap-1.5">
+                <CreditCard className="w-3.5 h-3.5 text-blue-600 animate-pulse" />
+                <h4 className="text-xs font-black tracking-tight text-slate-800">
+                  收銀點餐檯 (POS)
                 </h4>
               </div>
               <button
                 onClick={clearRegister}
-                className="p-2 hover:bg-slate-100 rounded-lg text-slate-400 hover:text-slate-600 transition-colors"
+                className="p-0.5 px-2 hover:bg-slate-100 rounded text-[9px] text-slate-400 hover:text-slate-600 transition-colors font-black uppercase flex items-center gap-0.5 border border-slate-150"
               >
-                <Trash2 className="w-4 h-4" />
+                <Trash2 className="w-2.5 h-2.5" />
+                清空
               </button>
             </div>
 
-            <div className="flex-1 flex flex-col gap-4 min-h-0">
-              <div className="bg-slate-50 rounded-2xl p-4 flex-1 overflow-y-auto space-y-1 border border-slate-100 custom-scrollbar min-h-0">
+            <div className="flex-1 flex flex-col gap-2 min-h-0">
+              {/* POS items cart with snugger vertical boundaries */}
+              <div className="bg-slate-50 rounded-lg p-2.5 flex-1 overflow-y-auto space-y-1 border border-slate-105 custom-scrollbar max-h-[100px] lg:max-h-none min-h-[50px]">
                 {registerItems.length === 0 ? (
-                  <div className="h-full flex flex-col items-center justify-center opacity-60 py-6 text-slate-450">
-                    <ShoppingBag className="w-6 h-6 mb-2 text-slate-400" />
+                  <div className="h-full flex flex-col items-center justify-center opacity-60 text-slate-450 py-2">
+                    <ShoppingBag className="w-4 h-4 mb-0.5 text-slate-400" />
                     <p className="text-[8px] font-black uppercase tracking-[0.2em] text-slate-400">
-                      待收銀
+                      待收點餐項目
                     </p>
                   </div>
                 ) : (
@@ -446,16 +546,16 @@ export default function Game({
                     return (
                       <div
                         key={i}
-                        className="flex items-center justify-between text-[11px] font-bold py-2 border-b border-slate-100 group text-slate-705"
+                        className="flex items-center justify-between text-[10px] font-bold py-1 border-b border-slate-100 group text-slate-705"
                       >
-                        <span className="flex items-center gap-2">
-                          <span className="opacity-80">{item?.icon}</span>
-                          <span className="truncate max-w-[100px] text-slate-800">
+                        <span className="flex items-center gap-1">
+                          <span className="scale-75 origin-left shrink-0">{item?.icon}</span>
+                          <span className="truncate max-w-[100px] text-slate-800 text-[10px]">
                             {item?.name}
                           </span>
                         </span>
-                        <div className="flex items-center gap-2">
-                          <span className="font-mono text-slate-450">
+                        <div className="flex items-center gap-1.5">
+                          <span className="font-mono text-slate-450 text-[9px]">
                             ${getItemPriceForOrder(id, currentOrder)}
                           </span>
                           <button
@@ -465,9 +565,9 @@ export default function Game({
                                 prev.filter((_, idx) => idx !== i),
                               );
                             }}
-                            className="opacity-0 group-hover:opacity-100 p-1 text-slate-400 hover:text-red-500 transition-all"
+                            className="p-0.5 text-slate-400 hover:text-red-500 transition-all opacity-100 lg:opacity-0 lg:group-hover:opacity-100"
                           >
-                            <Trash2 className="w-3 h-3" />
+                            <Trash2 className="w-2.5 h-2.5" />
                           </button>
                         </div>
                       </div>
@@ -476,18 +576,18 @@ export default function Game({
                 )}
               </div>
 
-              <div className="space-y-4 shrink-0">
-                {/* 快速鈔票/硬幣選擇 (Quick suggestions dynamic based on receipt total) */}
+              <div className="space-y-2 shrink-0">
+                {/* 快速鈔票/硬幣選擇 suggestions */}
                 {currentOrder && (
-                  <div className="flex gap-1.5 overflow-x-auto pb-1 custom-scrollbar">
+                  <div className="flex gap-1 overflow-x-auto pb-0.5 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
                     {getQuickCashSuggestions().map((amount) => (
                       <button
                         key={amount}
                         type="button"
                         onClick={() => setPosInput(amount.toString())}
-                        className={`flex-1 py-1.5 px-3 rounded-xl text-[10px] font-black tracking-tight whitespace-nowrap transition-all border text-center ${
+                        className={`flex-1 py-0.5 px-2 rounded text-[8px] font-black tracking-tight whitespace-nowrap transition-all border text-center ${
                           posInput === amount.toString()
-                            ? "bg-blue-600 border-blue-500 text-white shadow-lg"
+                            ? "bg-blue-600 border-blue-500 text-white shadow-sm scale-102"
                             : "bg-slate-50 border-slate-100 text-slate-600 hover:bg-slate-100 hover:text-slate-800"
                         }`}
                       >
@@ -497,12 +597,12 @@ export default function Game({
                   </div>
                 )}
 
-                {/* 顯示幕 (High contrast digital POS screen display) */}
-                <div className="relative group bg-slate-50 border border-slate-200 rounded-2xl py-3 px-6 flex items-center justify-between">
-                  <span className="text-[10px] font-black text-slate-400 tracking-widest uppercase">
-                    金額
+                {/* Amount Screen Monitor */}
+                <div className="relative group bg-slate-50 border border-slate-200 rounded-lg py-1 px-3 flex items-center justify-between">
+                  <span className="text-[8px] font-black text-slate-400 tracking-wider">
+                    輸入金額
                   </span>
-                  <div className="flex items-center gap-1 font-mono text-xl font-black text-blue-600">
+                  <div className="flex items-center gap-0.5 font-mono text-sm font-black text-blue-600">
                     <span>$</span>
                     <span>{posInput || "0"}</span>
                   </div>
@@ -513,44 +613,43 @@ export default function Game({
                       onClick={() =>
                         setPosInput(Math.round(currentOrder.total).toString())
                       }
-                      className="bg-blue-50 hover:bg-blue-100 text-blue-600 text-[10px] font-black py-1 px-2.5 rounded-lg transition-all border border-blue-200 active:scale-95"
+                      className="bg-blue-50 hover:bg-blue-100 text-blue-600 text-[8px] font-black py-0.5 px-1.5 rounded transition-all border border-blue-200 active:scale-95"
                     >
-                      自動輸入
+                      自動填入
                     </button>
                   )}
                 </div>
 
-                {/* 實體收銀按鈕 (Calculator POS touch keyboard pad) */}
-                <div className="grid grid-cols-3 gap-1.5">
+                {/* Calculator Keyboard */}
+                <div className="grid grid-cols-3 gap-1">
                   {["7", "8", "9", "4", "5", "6", "1", "2", "3"].map((num) => (
                     <button
                       key={num}
                       type="button"
                       onClick={() => handleNumpadPress(num)}
-                      className="py-3 bg-slate-50 hover:bg-slate-100 active:bg-slate-200 text-slate-700 text-base font-black font-mono rounded-xl transition-all border border-slate-100 active:scale-95 flex items-center justify-center shadow-sm"
+                      className="py-1 bg-slate-50 hover:bg-slate-100 active:bg-slate-200 text-slate-755 text-xs font-black font-mono rounded transition-all border border-slate-100 active:scale-95 flex items-center justify-center shadow-sm"
                     >
                       {num}
                     </button>
                   ))}
-                  {/* 清除 & 0 & 退格 */}
                   <button
                     type="button"
                     onClick={() => handleNumpadPress("C")}
-                    className="py-3 bg-red-50 hover:bg-red-100 text-red-600 text-[11px] font-black rounded-xl transition-all border border-red-100 active:scale-95 flex items-center justify-center uppercase tracking-wider shadow-sm"
+                    className="py-1 bg-red-50 hover:bg-red-100 text-red-600 text-[9px] font-black rounded transition-all border border-red-100 active:scale-95 flex items-center justify-center uppercase tracking-wider shadow-sm"
                   >
                     清除
                   </button>
                   <button
                     type="button"
                     onClick={() => handleNumpadPress("0")}
-                    className="py-3 bg-slate-50 hover:bg-slate-100 active:bg-slate-200 text-slate-700 text-base font-black font-mono rounded-xl transition-all border border-slate-100 active:scale-95 flex items-center justify-center shadow-sm"
+                    className="py-1 bg-slate-50 hover:bg-slate-100 active:bg-slate-200 text-slate-755 text-xs font-black font-mono rounded transition-all border border-slate-100 active:scale-95 flex items-center justify-center shadow-sm"
                   >
                     0
                   </button>
                   <button
                     type="button"
                     onClick={() => handleNumpadPress("⌫")}
-                    className="py-3 bg-slate-100 hover:bg-slate-200 active:bg-slate-300 text-slate-700 text-base font-black rounded-xl transition-all border border-slate-200 active:scale-95 flex items-center justify-center font-mono shadow-sm"
+                    className="py-1 bg-slate-100 hover:bg-slate-200 active:bg-slate-300 text-slate-755 text-xs font-black rounded transition-all border border-slate-200 active:scale-95 flex items-center justify-center font-mono shadow-sm"
                   >
                     ⌫
                   </button>
@@ -559,10 +658,10 @@ export default function Game({
                 <button
                   disabled={!currentOrder}
                   onClick={() => checkout()}
-                  className={`w-full py-4 rounded-2xl font-black text-xs transition-all flex items-center justify-center gap-3 ${currentOrder ? "bg-blue-600 hover:bg-blue-700 shadow-xl shadow-blue-600/20 active:scale-95" : "bg-slate-100 text-slate-400 cursor-not-allowed"}`}
+                  className={`w-full py-2 rounded-lg font-black text-[10px] transition-all flex items-center justify-center gap-1.5 ${currentOrder ? "bg-blue-600 hover:bg-blue-700 text-white shadow-md shadow-blue-600/10 active:scale-95" : "bg-slate-100 text-slate-400 cursor-not-allowed"}`}
                 >
                   結帳完成
-                  <ArrowRight className="w-4 h-4" />
+                  <ArrowRight className="w-3 h-3" />
                 </button>
               </div>
             </div>

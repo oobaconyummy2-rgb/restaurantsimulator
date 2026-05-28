@@ -51,7 +51,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
               <div className="bg-orange-500 p-2 rounded-xl text-white shadow-lg shadow-orange-200/50">
                 <Store className="w-5 h-5" />
               </div>
-              <h1 className="text-xl font-black tracking-tight text-slate-800">餐廳大亨</h1>
+              <h1 className="text-xl font-black tracking-tight text-slate-800">餐廳模擬器</h1>
             </div>
             
             {/* Show total money on very top header beside title for ultra small screens */}
@@ -94,7 +94,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
         </nav>
       </header>
 
-      <main className="max-w-7xl mx-auto p-6 min-h-[calc(100vh-80px)]">
+      <main className="max-w-7xl mx-auto p-4 md:p-6 min-h-[calc(100vh-80px)]">
         {feedback && (
           <motion.div 
             initial={{ opacity: 0, y: -20 }}
