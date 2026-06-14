@@ -28,7 +28,7 @@ export default function Achievements({ isComponent = false }: { isComponent?: bo
               <Trophy className="w-8 h-8" />
             </div>
             <div>
-              <h3 className="text-3xl font-black text-slate-900 tracking-tight">榮譽成就室</h3>
+              <h3 className="text-3xl font-black text-slate-900 tracking-tight">成就室</h3>
               <p className="text-slate-400 text-xs font-bold uppercase tracking-[0.35em] mt-1">Global Restaurant Hall of Fame</p>
             </div>
           </div>

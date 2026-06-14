@@ -19,7 +19,7 @@ import { useNavigate } from 'react-router-dom';
 
 export default function Menu({ isComponent = false }: { isComponent?: boolean }) {
   const navigate = useNavigate();
-  const { menuState, itemRatings, dailySpecials, stats, money, upgrades, toggleDailySpecial, prePrepItems, togglePrePrep, staff, buyUpgrade } = useGame();
+  const { menuState, itemRatings, dailySpecials, stats, money, upgrades, toggleDailySpecial, prePrepItems, togglePrePrep, staff, buyUpgrade, cheatsEnabled } = useGame();
 
   const getUpgradeCost = (id: string, base: number, level: number) => Math.round(base * Math.pow(1.5, level));
 
@@ -128,8 +128,8 @@ export default function Menu({ isComponent = false }: { isComponent?: boolean })
                         </p>
                         <button 
                           onClick={() => buyUpgrade(upgradeObj!.id)}
-                          disabled={money < unlockCost}
-                          className={`w-full py-4 rounded-2xl font-black text-xs uppercase tracking-widest flex items-center justify-center gap-3 transition-all ${money >= unlockCost ? 'bg-orange-500 text-white shadow-xl shadow-orange-500/20 hover:bg-orange-600 active:scale-95' : 'bg-slate-100 text-slate-300 cursor-not-allowed'}`}
+                          disabled={money < unlockCost && !cheatsEnabled}
+                          className={`w-full py-4 rounded-2xl font-black text-xs uppercase tracking-widest flex items-center justify-center gap-3 transition-all ${(money >= unlockCost || cheatsEnabled) ? 'bg-orange-500 text-white shadow-xl shadow-orange-500/20 hover:bg-orange-600 active:scale-95' : 'bg-slate-100 text-slate-300 cursor-not-allowed'}`}
                         >
                            <TrendingUp className="w-4 h-4" />
                            研發並解鎖 — ${unlockCost}

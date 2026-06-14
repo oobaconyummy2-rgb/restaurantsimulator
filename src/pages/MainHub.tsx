@@ -6,6 +6,7 @@ import Menu from './Menu';
 import Upgrade from './Upgrade';
 import Settings from './Settings';
 import Achievements from './Achievements';
+import Gacha from './Gacha';
 import { AnimatePresence, motion } from 'motion/react';
 
 export default function MainHub() {
@@ -15,6 +16,8 @@ export default function MainHub() {
     switch (activeTab) {
       case 'game':
         return <Game isComponent />;
+      case 'gacha':
+        return <Gacha isComponent />;
       case 'menu':
         return <Menu isComponent />;
       case 'upgrade':

@@ -15,6 +15,7 @@ import {
   X,
   Volume2,
   Clock,
+  Star,
 } from "lucide-react";
 import { useGame } from "../context/GameContext";
 import { FOOD_ITEMS, CUSTOMER_TYPES } from "../constants";
@@ -47,6 +48,7 @@ export default function Game({
     autoAmountEnabled,
     cheatsEnabled,
     hurryTable,
+    recentReviews,
   } = useGame();
 
   const [shoutingTables, setShoutingTables] = React.useState<Record<number, string | null>>({});
@@ -171,7 +173,7 @@ export default function Game({
             </div>
             <div>
               <h3 className="text-sm md:text-base font-black text-slate-800 tracking-tight">
-                餐廳座位 (Live Floor)
+                餐廳座位
               </h3>
             </div>
           </div>
@@ -230,9 +232,9 @@ export default function Game({
                 </div>
                 <div className="text-center">
                   <p
-                    className={`font-black text-[8px] uppercase tracking-tighter ${selectedTableIndex === idx ? "text-blue-600" : "text-slate-500"}`}
+                    className={`font-black text-[9px] tracking-tight ${selectedTableIndex === idx ? "text-blue-600 font-black" : "text-slate-500"}`}
                   >
-                    T{idx + 1}
+                    {idx + 1}號桌
                   </p>
                 </div>
 
@@ -345,7 +347,7 @@ export default function Game({
                 </h4>
                 <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mt-0.5">
                   {selectedTableIndex !== null
-                    ? `桌位 Table ${selectedTableIndex + 1}`
+                    ? `第 ${selectedTableIndex + 1} 桌`
                     : "等待點選桌位"}
                 </p>
               </div>
@@ -452,7 +454,7 @@ export default function Game({
           </div>
         </div>
 
-        {/* Middle: Menu Grid (菜單研發) */}
+        {/* Middle: Menu Grid (點餐檯) */}
         <div className={`lg:col-span-5 flex flex-col ${mobileTab === 'menu' ? 'block' : 'hidden lg:flex'}`}>
           <div className="bg-slate-900 rounded-2xl md:rounded-3xl p-3.5 md:p-4 shadow-2xl border border-white/10 flex flex-col relative overflow-hidden lg:h-[425px] transition-all">
             <Utensils className="absolute -top-12 -right-12 w-48 h-48 text-white/5 rotate-12 pointer-events-none" />
@@ -463,7 +465,7 @@ export default function Game({
                     <Utensils className="w-3.5 h-3.5" />
                   </div>
                   <h3 className="font-black text-sm text-white tracking-widest leading-none">
-                    菜單研發
+                    點餐檯
                   </h3>
                 </div>
                 <div className="flex gap-1">
@@ -668,6 +670,60 @@ export default function Game({
           </div>
         </div>
       </div>
+
+      {/* 顧客評價 Feed */}
+      <section className="bg-white rounded-2xl md:rounded-[2rem] p-4 md:p-6 border border-slate-200 shadow-sm relative overflow-hidden mt-6 text-slate-800">
+        <div className="flex items-center justify-between mb-4 pb-3 border-b border-slate-100">
+          <div className="flex items-center gap-2">
+            <div className="p-1.5 bg-amber-100 rounded-lg text-amber-600">
+              <Star className="w-4 h-4 fill-amber-500 text-amber-500" />
+            </div>
+            <div>
+              <h3 className="text-sm md:text-base font-black text-slate-800 tracking-tight">
+                近期顧客評價 (實時動態)
+              </h3>
+            </div>
+          </div>
+          <span className="text-[10px] font-bold text-slate-400 bg-slate-100 px-2 py-1 rounded">
+            最近 {recentReviews?.length || 0} 筆
+          </span>
+        </div>
+
+        {(!recentReviews || recentReviews.length === 0) ? (
+          <div className="py-8 text-center text-slate-400 text-xs">
+            <p className="font-bold">尚未收到顧客評價 💬</p>
+            <p className="text-[10px] text-slate-400 mt-1">顧客完成用餐結帳後，這裡將實時顯示五星評價細目！</p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3 max-h-[280px] overflow-y-auto pr-1">
+            {recentReviews.map((rev, idx) => {
+              const custInfo = getCustomerInfo(rev.customerType);
+              return (
+                <div 
+                  key={idx} 
+                  className="bg-slate-50 border border-slate-100 rounded-2xl p-4 flex items-start gap-3 transition-all hover:bg-slate-100/50"
+                >
+                  <span className="text-3xl shrink-0">{custInfo.icon}</span>
+                  <div className="min-w-0 flex-1">
+                    <div className="flex items-center justify-between gap-1.5 mb-1 bg-white/50 px-2 py-0.5 rounded-lg border border-slate-100">
+                      <span className="font-black text-xs text-slate-700">{custInfo.name}</span>
+                      <div className="flex items-center gap-0.5">
+                        {Array.from({ length: 5 }).map((_, i) => (
+                          <Star 
+                            key={i} 
+                            className={`w-3 h-3 ${i < rev.rating ? "text-amber-500 fill-amber-500" : "text-slate-200"}`} 
+                          />
+                        ))}
+                      </div>
+                    </div>
+                    <p className="text-xs text-slate-600 font-extrabold">{rev.comment}</p>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        )}
+      </section>
     </div>
   );
 

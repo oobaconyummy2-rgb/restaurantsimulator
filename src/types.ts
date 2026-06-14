@@ -110,3 +110,32 @@ export interface DailyStats {
   vipsServed: number;
   bonusMultiplier: number;
 }
+
+export interface GachaCard {
+  id: string;
+  name: string;
+  rarity: 'R' | 'S' | 'SR' | 'SSR';
+  professionId: string;
+  description: string;
+  buffLabel: string;
+  stats: {
+    staffLevelBonus?: number;
+    extraTipChance?: number;
+    extraSpeed?: number;
+    priceMod?: number;
+    patienceMod?: number;
+    spawnRateBonus?: number;
+  };
+}
+
+export interface DailyQuest {
+  id: string;
+  description: string;
+  target: number;
+  current: number;
+  rewardGems: number;
+  completed: boolean;
+  claimed: boolean;
+}
+
+

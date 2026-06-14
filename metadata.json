@@ -1,6 +1,8 @@
 {
-  "name": "餐廳模擬器",
-  "description": "模擬餐廳經營的遊戲",
+  "name": "星級餐旅大亨：設備與技能大作戰",
+  "description": "打造奢華餐廳！利用全新高級設備、強大技能卡及極致裝潢引領潮流，高達 5 星級的精緻餐廳模擬器。",
   "requestFramePermissions": [],
-  "majorCapabilities": []
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
 }

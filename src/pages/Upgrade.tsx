@@ -6,7 +6,7 @@ import { INITIAL_UPGRADES, INITIAL_STAFF, STAFF_SKILLS } from '../constants';
 import Layout from '../components/Layout';
 
 export default function Upgrade({ isComponent = false }: { isComponent?: boolean }) {
-  const { money, upgrades, staff, buyUpgrade, trainStaff, allocateSkillPoints } = useGame();
+  const { money, upgrades, staff, buyUpgrade, trainStaff, allocateSkillPoints, cheatsEnabled } = useGame();
   const [expandedStaff, setExpandedStaff] = useState<string | null>(null);
 
   const getUpgradeCost = (id: string, base: number, level: number) => Math.round(base * Math.pow(1.5, level));
@@ -30,7 +30,7 @@ export default function Upgrade({ isComponent = false }: { isComponent?: boolean
             {upgrades.filter(u => !u.id.startsWith('menu_')).map((u) => {
               const cost = getUpgradeCost(u.id, u.baseCost, u.level);
               const isMax = u.maxLevel !== undefined && u.level >= u.maxLevel;
-              const canAfford = money >= cost;
+              const canAfford = money >= cost || cheatsEnabled;
 
               return (
                 <div key={u.id} className="bg-white rounded-2xl md:rounded-[1.5rem] p-4 md:p-5 border border-slate-200 shadow-sm flex items-center gap-4 group transition-all hover:shadow-md">
@@ -47,7 +47,7 @@ export default function Upgrade({ isComponent = false }: { isComponent?: boolean
                    <button
                      disabled={isMax || !canAfford}
                      onClick={() => buyUpgrade(u.id)}
-                     className={`px-4 py-2 md:px-5 md:py-3 rounded-xl font-black text-xs flex flex-col items-center gap-0.5 transition-all shrink-0 ${isMax ? 'bg-slate-100 text-slate-400' : canAfford ? 'bg-blue-500 text-white hover:bg-blue-600 shadow-md shadow-blue-500/10 active:scale-95' : 'bg-slate-50 text-slate-300'}`}
+                     className={`px-4 py-2 md:px-5 md:py-3 rounded-xl font-black text-xs flex flex-col items-center gap-0.5 transition-all shrink-0 ${isMax ? 'bg-slate-100 text-slate-400' : (money >= cost || cheatsEnabled) ? 'bg-blue-500 text-white hover:bg-blue-600 shadow-md shadow-blue-500/10 active:scale-95' : 'bg-slate-50 text-slate-300'}`}
                    >
                       <span>{isMax ? 'MAX' : '提升'}</span>
                       {!isMax && <span className="text-[10px] opacity-80 font-mono tracking-tighter">${cost}</span>}
@@ -73,7 +73,7 @@ export default function Upgrade({ isComponent = false }: { isComponent?: boolean
          <div className="space-y-3">
             {staff.map((s) => {
               const cost = getStaffCost(s.id, s.baseCost, s.level);
-              const canAfford = money >= cost;
+              const canAfford = money >= cost || cheatsEnabled;
               const isExpanded = expandedStaff === s.id;
               const skills = STAFF_SKILLS[s.id] || [];
 
